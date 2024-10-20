@@ -15,7 +15,7 @@ public class Delivery {
     private Long id;
 
     // order 테이블에 delivery를 FK로 쓰겠따 명시
-    @OneToOne(mappedBy = "delivery") // 연관 관계의 주인이 아님을 명시 -> 즉, 컬럼이 생성되지 않음
+    @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY) // 연관 관계의 주인이 아님을 명시 -> 즉, 컬럼이 생성되지 않음
     private Order order;
 
     @Embedded
