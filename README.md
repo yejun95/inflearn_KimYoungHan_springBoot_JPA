@@ -57,3 +57,33 @@
 - 회원 등록 및 목록 조회
 
 - 상품 등록, 목록, 수정(`em.merge`)
+
+  준영속 엔티티 : 영속성 컨텍스트가 더는 관리하지 않는 엔티티 
+
+- 준영속 엔티티를 수정하는 2가지 방법
+  - 변경감지, 병합(merge)
+ 
+<br>
+
+- 변경 감지 : dirty checking
+
+Ex
+```java
+@Transactional
+void update(Item itemParam) { //itemParam: 파리미터로 넘어온 준영속 상태의 엔티티
+ Item findItem = em.find(Item.class, itemParam.getId()); //같은 엔티티를 조회한다.
+ findItem.setPrice(itemParam.getPrice()); //데이터를 수정한다.
+}
+```
+> 조회된 findItem은 영속 상태의 데이터이고, 이를 set 하게 되면 변경감지가 일어나며<br>
+트랜잭션 커밋에 의해 Flush가 되므로 최종적으로 db에 반영된다.<br>
+별도의 em.persist를 호출하지 않아도 저장이 되는 것
+<br>
+
+- 병합 : `em.merge`
+  - 변경 감지로 set으로 한땀한땀 설정하는 것을 한번에 해결
+  - 변경 감지는 원하는 속성만 수정되지만, merge는 모든 속성이 변경된다. (위험!! : 병합 시 값이 없으면 `null` 세팅됨)
+  - merge는 위험하기 때문에 웬만하면 변경감지를 사용한다.
+<br>
+
+- 주문, 주문 목록 조회(검색), 주문 취소
