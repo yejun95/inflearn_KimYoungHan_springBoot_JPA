@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -56,6 +57,20 @@ public class OrderApiController {
         return result;
     }
 
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> ordersV3_page(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value= "limit", defaultValue = "100") int limit) {
+
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+
+        List<OrderDto> result = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+
+        return result;
+    }
+
     @Data
     static class OrderDto {
 
@@ -66,13 +81,13 @@ public class OrderApiController {
         private Address address;
         private List<OrderItemDto> orderItems; // 한번더 dto로 데이터를 받아옴
 
-        public OrderDto(Order o) {
-            orderId = o.getId();
-            name = o.getMember().getName();
-            orderDate = o.getOrderDate();
-            orderStatus = o.getStatus();
-            address = o.getDelivery().getAddress();
-            orderItems = o.getOrderItems().stream()
+        public OrderDto(Order order) {
+            orderId = order.getId();
+            name = order.getMember().getName();
+            orderDate = order.getOrderDate();
+            orderStatus = order.getStatus();
+            address = order.getDelivery().getAddress();
+            orderItems = order.getOrderItems().stream()
                     .map(orderItem -> new OrderItemDto(orderItem))
                     .collect(Collectors.toList()); // 엔티티가 나올 때 마다 dto로 변환
         }
