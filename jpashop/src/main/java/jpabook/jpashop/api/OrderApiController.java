@@ -74,10 +74,18 @@ public class OrderApiController {
         return result;
     }
 
+    // 쿼리 3번 실행 ( N + 1 )
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4() {
         return orderQueryRepository.findOrderQueryDtos();
     }
+
+    // 쿼리 2번 실행
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDto_optimization();
+    }
+
 
     @Data
     static class OrderDto {
