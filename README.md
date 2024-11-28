@@ -146,7 +146,7 @@ void update(Item itemParam) { //itemParam: 파리미터로 넘어온 준영속 �
 <br>
 <br>
 
-### 학습 범위 : 3-4-1 - 
+### 학습 범위 : 3-4-1 - 3-4-8
 - `Order`에 대한 상세 controller -> `x to many` 까지 다룸
 <br>
 
@@ -171,3 +171,10 @@ void update(Item itemParam) { //itemParam: 파리미터로 넘어온 준영속 �
 나머지는 `hibernate.default_batch_fetch_szie`로 최적화하면 된다.
 
 - `hibernate.default_batch_fetch_szie`의 max size는 1000개가 한계 -> 100 - 1000 사이로 사용하자
+<br>
+<br>
+
+**➡️ x to many로 설정된 컬렉션을 dto로 전환하여 조회**
+- 스트림과 람다를 이용한 컬렉션 쿼리 최적화 진행
+
+- dto 스펙 맞추기 위한 분해 조립 방법
