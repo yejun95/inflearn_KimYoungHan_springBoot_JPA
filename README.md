@@ -178,3 +178,48 @@ void update(Item itemParam) { //itemParam: 파리미터로 넘어온 준영속 �
 - 스트림과 람다를 이용한 컬렉션 쿼리 최적화 진행
 
 - dto 스펙 맞추기 위한 분해 조립 방법
+<br>
+<hr>
+<br>
+
+## ✔️ OSIV와 성능 최적화
+- Open Session In view: 하이버 네이트
+
+- Open EntityManage In view: JPA
+
+- 관례상 OSIV 라고 한다.
+
+- `spring.jpa.open-in-view`: true가 기본값임
+  - 영속성 컨텍스트가 커넥션을 반환하는 기준
+  - true => 유저에게 완전히 response가 나갈 때 까지 영속성 컨텍스트가 커넥션을 물고 있음 (=지연 로딩이 가능한 이유)
+  - 그러나 커넥션 리소스를 오래 사용하기 때문에, 실시간 트래픽이 중요한 서비스의 경우 치명적인 단점임
+<br>
+
+**➡️ OSIV ON**
+![image](https://github.com/user-attachments/assets/bcd7afcc-925a-46e4-8964-2ac7786548bb)
+> 영속성 컨텍스트가 모든 범위에서 살아있음
+<br>
+
+**➡️ OSIV OFF**
+![image](https://github.com/user-attachments/assets/29bbe421-af86-4f59-8969-01ab114bc313)
+> spring.jpa.open-in-view를 false 시킨 것이며, 영속성 컨텍스트의 생존 범위가 service와 repository로 한정된다.<br>
+지연 로딩을 반드시 트랜잭션 안에서 처리해야함!!!
+<br>
+
+- 고객 서비스의 경우 OSIV를 끄고, ADMIN 처럼 커넥션을 많이 사용하지 않는 곳에서는 OSIV를 키는 것이 좋다.
+  - 그러나 서비스도 트래픽에 따라 다르기 때문에 적절하게 선택할 것
+<br>
+<hr>
+<br>
+
+## ✔️ 정리
+### 권장 순서
+- 엔티티 조회 방식으로 우선 접근 (dto 필수)
+  - 페치 조인으로 쿼리 수 최적화
+  - 컬렉션 최적화
+    - 페이징 필요 : `hibernate.default_batch_fetch_size` or `@BatchSize`로 최적화
+<br>
+
+- 엔티티 조회 방식으로 해결이 안되면 DTO 조회 방식 사용
+
+- DTO 조회 방식으로 해결이 안되면 NativeSQL or 스프링 JdbcTemplate 사용
